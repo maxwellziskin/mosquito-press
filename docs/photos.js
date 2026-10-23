@@ -58,7 +58,7 @@ export function createPhotoTools({getProject,getPage,getSelected,markUndo,change
       await loadImage(src);const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(src)),id='photo-'+[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
       const photo={id,src,name:asset.name,ratio:asset.ratio},photos=[...(project.photos||[])];if(!photos.some(p=>p.id===id))photos.push(photo);validatePhotos(photos);
       if(project!==getProject()||page!==getPage())throw Error('The selected page changed. Choose the photo again.');
-      markUndo();project.photos=photos;Object.assign(page,patch(photo,PHOTO_LAYOUTS.includes(page.layout)?page.layout:'photo-only'),{fit:'contain'});fillFields();changed();$('modal').close();showContent();toast('Photo added. Use Adjust photo to change the fit or crop.');
+      markUndo();project.photos=photos;Object.assign(page,patch(photo,PHOTO_LAYOUTS.includes(page.layout)?page.layout:'photo-only'));fillFields();changed();$('modal').close();showContent();toast('Photo added. Adjust the crop in Photos.');
     }catch(e){toast(e.message||'The brand photo could not be added.');}finally{busy=false;button.disabled=false;button.removeAttribute('aria-busy');}
   }
   function brandPhotoDialog(){
