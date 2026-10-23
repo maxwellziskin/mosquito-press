@@ -237,8 +237,11 @@ export function createPDF(pages){
 }
 export function canvasJpeg(canvas){const raw=atob(canvas.toDataURL('image/jpeg',.98).split(',')[1]);return Uint8Array.from(raw,c=>c.charCodeAt(0));}
 export async function png300dpi(canvas){
-  const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));const bytes=new Uint8Array(await blob.arrayBuffer());
+  const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));if(!blob)throw new Error('PNG export failed. Try a smaller paper size.');const bytes=new Uint8Array(await blob.arrayBuffer());
   const body=new Uint8Array(13),view=new DataView(body.buffer);body.set(ascii('pHYs'));view.setUint32(4,11811);view.setUint32(8,11811);body[12]=1;
   let crc=0xffffffff;for(const b of body){crc^=b;for(let i=0;i<8;i++)crc=crc&1?(crc>>>1)^0xedb88320:crc>>>1;}const chunk=new Uint8Array(21),cv=new DataView(chunk.buffer);cv.setUint32(0,9);chunk.set(body,4);cv.setUint32(17,(crc^0xffffffff)>>>0);
-  return new Blob([bytes.slice(0,33),chunk,bytes.slice(33)],{type:'image/png'});
+  // Replace any browser-provided resolution chunk so readers see one 300-DPI value.
+  const parts=[bytes.slice(0,33),chunk],source=new DataView(bytes.buffer);
+  for(let offset=33;offset<bytes.length;){const end=offset+12+source.getUint32(offset);if(String.fromCharCode(...bytes.slice(offset+4,offset+8))!=='pHYs')parts.push(bytes.slice(offset,end));offset=end;}
+  return new Blob(parts,{type:'image/png'});
 }
