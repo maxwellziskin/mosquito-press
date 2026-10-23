@@ -1,5 +1,7 @@
 # Mosquito Press
 
+[Open Mosquito Press](https://maxwellziskin.github.io/mosquito-press/)
+
 A browser-only editor for bottle-neck booklets, packaging inserts, and zines. The default is a folded eight-page booklet on US Letter paper.
 
 ## Hosting
