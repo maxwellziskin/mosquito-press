@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3eb">
+  <meta name="description" content="Bottle neck booklet / packaging insert / zine. Design and print in your browser with Mosquito Ranch Spirits and Freezer Martini Service artwork.">
+  <title>Mosquito Press — Bottle neck booklet / packaging insert / zine</title>
+  <link rel="icon" href="assets/brand/mosquito-fly-black.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/primos.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/pirelli.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="./" class="wordmark" aria-label="Mosquito Press home"><span class="wordmark-name">mosquito</span><span class="wordmark-press">press<img class="wordmark-fly" src="assets/brand/mosquito-fly-black.svg" alt="" aria-hidden="true"></span></a>
+    <span class="header-divider"></span>
+    <div class="project-heading"><input id="project-name" aria-label="Project name" value="Freezer Martini Service"><span id="save-status" role="status"><i></i> All changes saved on this device</span></div>
+    <div class="top-actions"><button id="project-menu-button" class="button quiet">Project <span>⌄</span></button><button id="preview-button" class="button outline"><span aria-hidden="true">◫</span> Preview</button><button id="export-button" class="button primary">Export <span aria-hidden="true">↗</span></button></div>
+    <div id="project-menu" class="dropdown" hidden><button id="new-project">New blank project</button><button id="save-project">Download project</button><button id="open-project">Open project file</button><button id="menu-fold">Folding instructions</button></div>
+  </header>
+  <main class="studio">
+    <aside class="pages-sidebar" aria-label="Project pages">
+      <div class="sidebar-title"><span>YOUR BOOKLET</span><span class="count-badge">8 PAGES</span></div>
+      <p class="sidebar-note">Mosquito Ranch Spirits</p>
+      <div id="design-actions" class="design-actions" hidden><button id="add-design">+ Add design</button><button id="remove-design">Remove design</button></div><div id="page-list" class="page-list"></div>
+      <div class="sidebar-bottom"><span class="tiny-label">PRINT SETUP</span><button id="fold-button" class="text-link">Folding instructions <span>↗</span></button><p>Single-sided · 100% scale</p></div>
+    </aside>
+    <section class="workspace" aria-label="Page workspace">
+      <div class="workspace-toolbar"><div class="view-tabs" role="group" aria-label="Canvas view"><button id="page-view" class="active" aria-pressed="true">Page</button><button id="sheet-view" aria-pressed="false">Print sheet</button></div><div class="paper-control"><label for="paper-size">PAPER</label><select id="paper-size" aria-label="Paper size"><option value="letter">US Letter</option><option value="a4">A4</option><option value="a3">A3</option></select></div></div>
+      <div class="sheet-toolbar"><button id="sheet-layout-button" aria-label="Format and fold"><span class="tiny-label">FORMAT & FOLD</span><strong id="sheet-layout-name">Folded 8-page booklet</strong><span aria-hidden="true">⌄</span></button><button id="assembly-button" class="assembly-button">Assembly ↗</button><div id="sheet-pagination" hidden><button id="sheet-prev" aria-label="Previous print sheet">←</button><span id="sheet-count"></span><button id="sheet-next" aria-label="Next print sheet">→</button></div></div>
+      <div class="format-status"><span id="format-summary"></span><span id="retained-designs" hidden></span><span id="print-order-key" hidden></span></div><div class="print-tools"><label><input id="show-safe-area" type="checkbox"> Margin guides</label><button id="print-check">Check print ↗</button></div><div class="canvas-stage" id="canvas-stage"><div class="canvas-title"><span id="page-label">01 / FRONT COVER</span><span id="page-dimensions">2.75 × 4.25 IN</span></div><div class="canvas-wrap"><canvas id="page-canvas" tabindex="0" aria-label="Live page preview; select and drag layers, arrow keys to move"></canvas><div id="art-selection" hidden><button id="art-resize" aria-label="Resize selected layer" title="Drag to resize"></button></div></div><div class="canvas-meta"><span id="canvas-hint"><span class="orange-dot"></span> Freezer Martini Service</span><div class="history"><button id="undo" aria-label="Undo" title="Undo (⌘Z)">↶</button><button id="redo" aria-label="Redo" title="Redo (⌘⇧Z)">↷</button></div></div></div>
+      <div class="workspace-footer"><span class="studio-purpose"><img src="assets/brand/mosquito-fly-black.svg" alt="" aria-hidden="true"> Bottle neck booklet / packaging insert / zine</span><button id="shortcuts-button">Keyboard shortcuts <span>⌘</span></button></div>
+    </section>
+    <aside class="inspector" aria-label="Page design controls">
+      <div class="inspector-heading"><div><span class="tiny-label">PAGE SETTINGS</span><h1 id="inspector-title">Front cover</h1></div><span class="page-index" id="selected-index">01</span><button id="close-mobile-editor" aria-label="Close editor">×</button></div>
+      <div class="inspector-tabs" role="tablist" aria-label="Editing tools"><button id="content-tab" class="active" role="tab" aria-selected="true">Content</button><button id="design-tab" role="tab" aria-selected="false">Design</button><button id="art-tab" role="tab" aria-selected="false">Layers</button><button id="templates-tab" role="tab" aria-selected="false">Templates</button></div>
+      <div class="inspector-scroll">
+        <section id="content-panel" role="tabpanel" aria-labelledby="content-tab"><div class="photo-section">
+          <div class="section-heading"><h2 class="photo-heading">Photos</h2><button id="remove-image" class="small-link" hidden>Remove photo</button></div>
+          <button id="image-upload" class="upload-zone"><span class="upload-icon">↥</span><strong id="upload-label">Add photos</strong><span>JPG, PNG, WEBP · stays on your device</span></button>
+          <p class="fine-print">Choose several photos to make one photo page per image, or keep them in your library. Up to 16 photos / 20 MB per library.</p>
+          <button id="brand-photo-browse" class="button outline full-width brand-photo-browse">Browse brand photos <span>7</span></button>
+          <div id="image-controls" hidden><button id="photo-adjust" class="button outline photo-adjust">Adjust photo ↗</button>
+            <label class="field-label" for="photo-layout">PHOTO LAYOUT</label><select id="photo-layout" class="field"><option value="photo-only">Photo only · edge to edge</option><option value="photo-caption">Photo with caption</option><option value="photo-inset">Photo with border</option><option value="photo">Photo + type</option><option value="template" disabled>Current template</option></select>
+            <div id="photo-caption-controls" hidden><label class="field-label" for="photo-caption">CAPTION</label><textarea id="photo-caption" class="field" maxlength="500" rows="3" placeholder="Optional caption"></textarea></div>
+            <label class="field-label" for="image-fit">IMAGE FIT</label><select id="image-fit" class="field"><option value="cover">Fill / crop</option><option value="contain">Show entire photo</option></select>
+            <label class="field-label" for="image-position">LEFT / RIGHT</label><input id="image-position" type="range" min="0" max="100">
+            <label class="field-label" for="image-position-y">UP / DOWN</label><input id="image-position-y" type="range" min="0" max="100">
+            <label class="field-label" for="image-zoom">ZOOM <output id="image-zoom-value">100%</output></label><input id="image-zoom" type="range" min="100" max="300" step="1">
+            <div class="photo-actions"><button id="photo-rotate" class="button outline">Rotate 90°</button><button id="photo-reset" class="button outline">Reset crop</button></div>
+            <label class="field-label" for="image-treatment">PHOTO TREATMENT</label><select id="image-treatment" class="field"><option value="original">Original</option><option value="mono">Black & white</option><option value="warm">Warm</option><option value="high">High contrast</option></select>
+            <label class="field-label" for="image-overlay">INK OVERLAY <output id="overlay-value"></output></label><input id="image-overlay" type="range" min="0" max="80">
+          </div>
+          <details id="photo-library" hidden><summary>Your photos <span id="photo-count"></span></summary><div id="photo-library-grid" class="photo-library-grid"></div></details>
+          <div class="section-rule"></div>
+        </div><div id="free-content-note" hidden><p class="fine-print">This page uses movable text and image layers.</p><button id="free-content-layers" class="button outline full-width">Edit layers ↗</button></div><div id="template-content-fields">
+          <label class="field-label" for="eyebrow">HEADER</label><input id="eyebrow" class="field" maxlength="100" placeholder="Mosquito Ranch Spirits">
+          <label class="field-label" for="headline">HEADLINE <span id="headline-font-name">Primos</span></label><textarea id="headline" class="field headline-input" rows="4" maxlength="350" placeholder="Mosquito Ranch Spirits"></textarea>
+          <label class="field-label" for="body-copy">BODY / CAPTION</label><textarea id="body-copy" class="field" rows="3" maxlength="2400" placeholder="Freezer Martini Service"></textarea>
+          <label class="field-label" for="byline">BYLINE / FOOTNOTE</label><input id="byline" class="field" maxlength="150" placeholder="Mosquito Ranch Spirits">
+
+        </div></section>
+        <section id="design-panel" role="tabpanel" aria-labelledby="design-tab" hidden><button id="brand-kits-button" class="button outline full-width photo-adjust">Saved brand kits ↗</button>
+          <label class="field-label" for="layout">PAGE LAYOUT</label><select id="layout" class="field"><option value="poster">Type poster</option><option value="editorial">Editorial</option><option value="photo-only">Photo only</option><option value="photo-caption">Photo with caption</option><option value="photo-inset">Photo with border</option><option value="photo">Photo + type</option><option value="quote">Centered text</option><option value="notes">Notes</option><option value="banner">Color banner</option><option value="frame">Double frame</option><option value="split">Photo / type split</option><option value="menu">Menu</option><option value="label">Border label</option><option value="columns">Two columns</option><option value="free">Free layout</option></select>
+          <label class="field-label" for="headline-font">HEADLINE TYPEFACE</label><select id="headline-font" class="field"><option value="Primos">Primos</option><option value="Pirelli">Pirelli</option><option value="Primos Condensed">Primos Condensed</option><option value="Georgia">Georgia</option><option value="Courier New">Courier</option></select>
+          <label class="field-label" for="body-font">BODY TYPEFACE</label><select id="body-font" class="field"><option value="Pirelli">Pirelli</option><option value="Primos">Primos</option><option value="Georgia">Georgia</option><option value="Courier New">Courier</option></select>
+          <div class="font-preview"><span id="font-preview-heading">Aa, Bb. 123</span><p id="font-preview-body">Mosquito Ranch Spirits</p><small id="font-preview-names">Pirelli / Primos</small></div><p class="fine-print">Mosquito Ranch Spirits: Primos.<br>Freezer Martini Service: Pirelli.</p>
+          <button id="font-upload" class="upload-zone font-upload"><strong>Import fonts ↥</strong><span>TTF, OTF, WOFF, WOFF2 · drop or browse</span></button>
+          <input id="font-input" type="file" accept=".ttf,.otf,.woff,.woff2" multiple hidden>
+          <p class="fine-print font-help">5 MB per font. Saved with this project.</p>
+          <p id="font-status" class="font-status" role="status" aria-live="polite"></p>
+          <details id="font-library" class="font-library" hidden><summary>Imported fonts <span id="font-count">0</span></summary><div id="font-list"></div></details>
+          <label class="field-label" for="type-size">HEADLINE SIZE <output id="type-size-value"></output></label><input id="type-size" type="range" min="60" max="135">
+          <label class="field-label">ALIGNMENT</label><div class="segmented" id="alignment"><button data-align="left" aria-label="Align left">☰ Left</button><button data-align="center" aria-label="Align center">☰ Center</button><button data-align="right" aria-label="Align right">☰ Right</button></div>
+          <label class="field-label">PAPER & INK</label><div class="color-fields"><label><input id="background-color" type="color">Paper</label><label><input id="text-color" type="color">Ink</label><label><input id="accent-color" type="color">Accent</label></div><div id="palette-list" class="brand-palettes"></div>
+          <label class="field-label" for="swatch-target">BRAND COLORS <select id="swatch-target" aria-label="Apply brand color to"><option value="bg">Paper</option><option value="ink">Ink</option><option value="accent">Accent</option></select></label><div id="brand-swatches" class="brand-swatches"></div><p class="fine-print">Exact colors from your Mosquito Ranch brand toolkit.</p>
+
+          <label class="field-label" for="decoration">DECORATION</label><select id="decoration" class="field"><option value="fly">Mosquito Ranch fly</option><option value="orbit">Orbit lines</option><option value="none">None</option></select><label class="check-row"><input id="grain" type="checkbox"> Paper grain</label><label class="check-row" id="page-number-control"><input id="show-page-number" type="checkbox"> <span id="number-label">Print page number</span></label><button id="apply-style" class="button outline full-width">Apply this style to all pages</button>
+        </section>
+        <section id="art-panel" role="tabpanel" aria-labelledby="art-tab" hidden>
+          <details id="kit-assets" hidden><summary>Brand kit artwork</summary><div id="kit-asset-grid" class="photo-library-grid"></div></details><p class="art-intro">Text, photos & artwork</p><p class="fine-print">Tap a layer to select. Drag to move; use the corner handle to resize.</p>
+          <button id="make-free" class="button outline full-width">Make text movable</button><p class="fine-print">Uses this template’s text and photos as editable layers. Decorative frames are removed. Undo restores the template.</p>
+          <div class="layer-add"><button id="add-text" class="button outline">Add text</button><button id="art-upload" class="button outline">Add images ↥</button></div>
+          <label class="check-row"><input id="snap-layers" type="checkbox" checked> Snap to centers, edges & safe area</label>
+          <div id="art-layer-list" class="art-layer-list" aria-label="Page layers"></div><p id="art-empty" class="fine-print">No movable layers on this page.</p>
+          <div id="art-controls" hidden>
+            <label class="check-row"><input id="art-lock" type="checkbox"> Lock selected layer</label>
+            <fieldset id="layer-properties">
+              <div id="art-text-controls" hidden>
+                <label class="field-label" for="layer-text">TEXT</label><textarea id="layer-text" class="field" rows="3" maxlength="2400"></textarea>
+                <label class="field-label" for="layer-font">LAYER TYPEFACE</label><select id="layer-font" class="field"></select>
+                <div class="layer-numbers"><label for="layer-font-size">SIZE (PT)<input id="layer-font-size" class="field" type="number" min="2" max="200" step=".5"></label><label for="layer-leading">LINE SPACING<input id="layer-leading" class="field" type="number" min=".8" max="2" step=".05"></label></div>
+                <label class="field-label" for="layer-color">TEXT COLOR <input id="layer-color" type="color"></label>
+                <label class="field-label" for="layer-align">TEXT ALIGNMENT</label><select id="layer-align" class="field"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select>
+              </div>
+              <div id="art-fit-control"><label class="field-label" for="layer-fit">IMAGE FIT</label><select id="layer-fit" class="field"><option value="cover">Fill / crop</option><option value="contain">Show entire image</option></select></div>
+              <label class="field-label" for="art-x">HORIZONTAL POSITION <output id="art-x-value"></output></label><input id="art-x" type="range" min="0" max="100" step=".5">
+              <label class="field-label" for="art-y">VERTICAL POSITION <output id="art-y-value"></output></label><input id="art-y" type="range" min="0" max="100" step=".5">
+              <label class="field-label" for="art-size">WIDTH <output id="art-size-value"></output></label><input id="art-size" type="range" min="2" max="200" step=".5">
+              <label class="field-label" for="art-height">HEIGHT <output id="art-height-value"></output></label><input id="art-height" type="range" min="2" max="200" step=".5">
+              <label class="field-label" for="art-rotation">ROTATION <output id="art-rotation-value"></output></label><input id="art-rotation" type="range" min="-180" max="180" step="1">
+            </fieldset>
+            <div class="art-actions"><button id="art-back">Send to back</button><button id="art-front">Bring to front</button><button id="art-duplicate">Duplicate</button><button id="art-delete">Remove layer</button></div>
+          </div>
+          <p class="fine-print">PNG transparency is preserved. JPG and WebP also supported. Select multiple files to add multiple photos.</p><div id="art-library"></div>
+        </section>
+        <section id="templates-panel" role="tabpanel" aria-labelledby="templates-tab" hidden><p class="template-intro">Mosquito Ranch Spirits<br>Freezer Martini Service</p><div id="template-list" class="template-list"></div><button id="template-sheet-layout" class="button outline full-width">Format & fold ↗</button><p class="fine-print">Apply a layout and color palette to this page.</p><button id="demo-project" class="button outline full-width">Load brand sample</button></section>
+      </div>
+      <div class="inspector-bottom"><button id="copy-page" title="Copy page design and content">Copy page</button><button id="paste-page" disabled>Paste page</button><button id="move-earlier" aria-label="Move page earlier" title="Move page earlier">←</button><button id="move-later" aria-label="Move page later" title="Move page later">→</button></div>
+    </aside>
+  </main>
+  <button id="mobile-scrim" aria-label="Close editing tray" hidden></button>
+  <nav class="mobile-tools" aria-label="Studio tools"><button id="mobile-pages"><span>▤</span>Pages</button><button id="mobile-content"><span>Aa</span>Edit</button><button id="mobile-design"><span>◐</span>Style</button><button id="mobile-art"><img class="tool-fly" src="assets/brand/mosquito-fly-black.svg" alt="" aria-hidden="true">Layers</button><button id="mobile-templates"><span>▦</span>Templates</button><button id="mobile-project"><span>⋯</span>Project</button></nav>
+  <input id="art-input" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden><input id="image-input" type="file" multiple accept="image/jpeg,image/png,image/webp" hidden><input id="project-input" type="file" accept=".json,.mosquitopress,.littlepress" hidden>
+  <dialog id="modal"><div class="modal-heading"><div><span id="modal-kicker" class="tiny-label">MOSQUITO PRESS</span><h2 id="modal-title"></h2></div><button id="modal-close" class="icon-button" aria-label="Close dialog">×</button></div><div id="modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
