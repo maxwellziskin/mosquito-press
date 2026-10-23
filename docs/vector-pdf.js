@@ -46,7 +46,11 @@ function pdfCanvas(doc,runtime,fonts,width,height){
 }
 export async function vectorPDF(project,{mode='print',selected=0,guides=false,progress=()=>{}}={}){
   const runtime=await import('./vendor/pdf-runtime.js');await ensureFonts(project);await document.fonts.ready;await preloadPages(project.pages);await vectorSources(project);
-  const spec=sheetSpec(project.paper,project.format),doc=new runtime.PDFDocument({autoFirstPage:false,compress:true,info:{Title:project.name,Creator:'Mosquito Press'}}),fonts=new Set();
+  const spec=sheetSpec(project.paper,project.format),doc=new runtime.PDFDocument({autoFirstPage:false,compress:true,pdfVersion:'1.7',info:{Title:project.name,Creator:'Mosquito Press'}}),fonts=new Set();
+  // PDF viewers may honor these print defaults; printer hardware still controls
+  // whether ink can reach the physical edge of the selected paper.
+  // PDFKit closes ViewerPreferences when doc.end() runs.
+  doc._root.data.ViewerPreferences=doc.ref({PrintScaling:'None',Duplex:'Simplex'});
   const chunks=[],result=new Promise((resolve,reject)=>{doc.on('data',c=>chunks.push(c));doc.on('end',()=>resolve(new Blob(chunks,{type:'application/pdf'})));doc.on('error',reject);});
   await Promise.all(Object.entries(fontFiles).map(async([name,file])=>{const res=await fetch('assets/fonts/'+file);if(!res.ok)throw Error('A brand font could not be loaded.');doc.registerFont(name,runtime.Buffer.from(await res.arrayBuffer()));fonts.add(name);}));
   for(const f of project.fonts||[]){doc.registerFont(f.id,runtime.Buffer.from(f.data,'base64'));fonts.add(f.id);}
