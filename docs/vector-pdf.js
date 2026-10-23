@@ -54,22 +54,22 @@ export async function vectorPDF(project,{mode='print',selected=0,guides=false,pr
   const chunks=[],result=new Promise((resolve,reject)=>{doc.on('data',c=>chunks.push(c));doc.on('end',()=>resolve(new Blob(chunks,{type:'application/pdf'})));doc.on('error',reject);});
   await Promise.all(Object.entries(fontFiles).map(async([name,file])=>{const res=await fetch('assets/fonts/'+file);if(!res.ok)throw Error('A brand font could not be loaded.');doc.registerFont(name,runtime.Buffer.from(await res.arrayBuffer()));fonts.add(name);}));
   for(const f of project.fonts||[]){doc.registerFont(f.id,runtime.Buffer.from(f.data,'base64'));fonts.add(f.id);}
-  const face=async(index,x,y,rotate=false)=>{const w=spec.pageW*72,h=spec.pageH*72;doc.save().translate(x+w/2,y+h/2);if(rotate)doc.rotate(180);doc.translate(-w/2,-h/2).rect(0,0,w,h).clip();const canvas=pdfCanvas(doc,runtime,fonts,w,h);await drawPage(canvas,project.pages[index],project.paper,index,w,project.format);doc.restore();};
+  const face=async(index,x,y,rotate=false)=>{const w=spec.pageW*72,h=spec.pageH*72;doc.save().translate(x+w/2,y+h/2);if(rotate)doc.rotate(180);doc.translate(-w/2,-h/2).rect(0,0,w,h).clip();if(project.bw){const canvas=document.createElement('canvas');await drawPage(canvas,project.pages[index],project.paper,index,Math.round(spec.pageW*600),project.format,null,true);doc.image(canvas.toDataURL('image/png'),0,0,{width:w,height:h});}else{const canvas=pdfCanvas(doc,runtime,fonts,w,h);await drawPage(canvas,project.pages[index],project.paper,index,w,project.format);}doc.restore();};
   if(mode==='print'){
     const sheets=sheetPages(project,selected),slots=sheetSlots(spec);
-    for(let n=0;n<sheets.length;n++){progress(`Preparing vector sheet ${n+1} of ${sheets.length}…`);doc.addPage({size:[spec.w*72,spec.h*72],margin:0});for(let i=0;i<sheets[n].length;i++){const s=slots[i];await face(sheets[n][i],s.x*72,s.y*72,spec.tent||spec.folded&&i<4);if(spec.tent)await face(sheets[n][i],s.x*72,(s.y+spec.pageH)*72);}if(guides)drawTrimGuides(pdfCanvas(doc,runtime,fonts,spec.w*72,spec.h*72).getContext('2d'),spec,spec.w*72);}
+    for(let n=0;n<sheets.length;n++){progress(`Preparing vector sheet ${n+1} of ${sheets.length}…`);doc.addPage({size:[spec.w*72,spec.h*72],margin:0});for(let i=0;i<sheets[n].length;i++){const s=slots[i];await face(sheets[n][i],s.x*72,s.y*72,spec.tent||spec.folded&&i<4);if(spec.tent)await face(sheets[n][i],s.x*72,(s.y+spec.pageH)*72);}if(guides)drawTrimGuides(pdfCanvas(doc,runtime,fonts,spec.w*72,spec.h*72).getContext('2d'),spec,spec.w*72,false,.25,project.bw);}
   }else{
     for(let i=0;i<activeCount(project);i++){progress(`Preparing vector design ${i+1} of ${activeCount(project)}…`);const pad=mode==='press'?27:0,w=spec.pageW*72,h=spec.pageH*72;doc.addPage({size:[w+pad*2,h+pad*2],margin:0});
       if(pad){doc.page.dictionary.data.TrimBox=[pad,pad,w+pad,h+pad];doc.page.dictionary.data.BleedBox=[pad-9,pad-9,w+pad+9,h+pad+9];
         // Extend edge pixels into the 1/8-inch bleed only. The complete trim area
         // remains vector; edge strips preserve photographs, borders, and artwork.
-        const edge=document.createElement('canvas');await drawPage(edge,project.pages[i],project.paper,i,Math.round(spec.pageW*300),project.format);const strip=document.createElement('canvas');
+        const edge=document.createElement('canvas');await drawPage(edge,project.pages[i],project.paper,i,Math.round(spec.pageW*(project.bw?600:300)),project.format,null,project.bw);const strip=document.createElement('canvas');
         const add=(sx,sy,sw,sh,dx,dy,dw,dh)=>{strip.width=sw;strip.height=sh;strip.getContext('2d').drawImage(edge,sx,sy,sw,sh,0,0,sw,sh);doc.image(strip.toDataURL('image/png'),dx,dy,{width:dw,height:dh});};
         add(0,0,edge.width,1,pad,pad-9,w,9);add(0,edge.height-1,edge.width,1,pad,pad+h,w,9);add(0,0,1,edge.height,pad-9,pad,9,h);add(edge.width-1,0,1,edge.height,pad+w,pad,9,h);
         for(const [sx,sy,dx,dy]of [[0,0,pad-9,pad-9],[edge.width-1,0,pad+w,pad-9],[0,edge.height-1,pad-9,pad+h],[edge.width-1,edge.height-1,pad+w,pad+h]])add(sx,sy,1,1,dx,dy,9,9);
       }
       await face(i,pad,pad);
-      if(pad){doc.save().strokeColor('#202020').lineWidth(.25).undash();for(const x of [pad,pad+w]){doc.moveTo(x,4).lineTo(x,pad-12).stroke();doc.moveTo(x,pad+h+12).lineTo(x,h+2*pad-4).stroke();}for(const y of [pad,pad+h]){doc.moveTo(4,y).lineTo(pad-12,y).stroke();doc.moveTo(pad+w+12,y).lineTo(w+2*pad-4,y).stroke();}doc.restore();}
+      if(pad){doc.save().strokeColor(project.bw?'#000000':'#202020').lineWidth(.25).undash();for(const x of [pad,pad+w]){doc.moveTo(x,4).lineTo(x,pad-12).stroke();doc.moveTo(x,pad+h+12).lineTo(x,h+2*pad-4).stroke();}for(const y of [pad,pad+h]){doc.moveTo(4,y).lineTo(pad-12,y).stroke();doc.moveTo(pad+w+12,y).lineTo(w+2*pad-4,y).stroke();}doc.restore();}
     }
   }
   doc.end();return result;

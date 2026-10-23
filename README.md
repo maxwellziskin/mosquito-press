@@ -4,6 +4,8 @@
 
 A browser-only editor for bottle-neck booklets, packaging inserts, and zines. The default is a folded eight-page booklet on US Letter paper.
 
+Photos default to Fill / crop. The B/W button converts every page and export to hard black and white without altering the original artwork. Toggle it off to restore color. B/W PDFs flatten each page at 600 DPI; color PDFs retain vector type and SVG.
+
 ## Hosting
 
 The complete website is in `docs/`. GitHub Pages publishes `main` → `/docs`. `.nojekyll` tells GitHub to serve these files directly. No application server, account system, API keys, cloud database, external font service, or paid backend is required.

@@ -1,4 +1,5 @@
 import {brandFont} from './brand-type.js';
+import {hardBlackAndWhite,contrastingBlackOrWhite} from './bw.js';
 import {flySource} from './fly.js';
 import {artSource,artRatio} from './brand.js';
 import {sheetSpec,sheetPages,sheetSlots} from './formats.js';
@@ -71,7 +72,9 @@ async function photo(ctx,p,x,y,w,h){
   if(p.overlay){ctx.fillStyle=`rgba(0,0,0,${p.overlay/100})`;ctx.fillRect(x,y,w,h);}
   ctx.restore();
 }
-export async function drawPage(canvas,p,paper,index,width=600,format='zine',capture=null){
+export async function drawPage(canvas,p,paper,index,width=600,format='zine',capture=null,bw=false){
+  // Keep the brand fly visible when its accent and paper cross the same threshold.
+  if(bw&&['fly','star'].includes(p.decoration))p={...p,accent:contrastingBlackOrWhite(p.bg)};
   const spec=sheetSpec(paper,format),H=640,reserved=spec.neck&&p.layout!=='free'?2:0,unit=(spec.pageH-reserved)/H,W=spec.pageW/unit,fullH=spec.pageH/unit;canvas.width=Math.round(width);canvas.height=Math.round(width*spec.pageH/spec.pageW);
   canvas.dataset.overflow='false';canvas.printMarks=[];const ctx=canvas.getContext('2d');ctx._spec=spec;ctx._unit=unit;ctx._capture=capture;ctx.scale(canvas.width/W,canvas.height/fullH);ctx.fillStyle=p.bg;ctx.fillRect(0,0,W,fullH);
   const m=30,iw=W-m*2;
@@ -167,6 +170,7 @@ export async function drawPage(canvas,p,paper,index,width=600,format='zine',capt
     else await photo(ctx,{image:artSource(a),fit:a.fit||'cover',treatment:a.treatment||'original',focal:a.focal??50,focalY:a.focalY??50,zoom:a.zoom||100,imageRotate:a.imageRotate||0,overlay:a.overlay||0,name:layerName(a),vector:!!a.asset&&artSource(a).endsWith('.svg')},-w/2,-h/2,w,h);
     ctx.restore();
   }
+  if(bw)hardBlackAndWhite(canvas);
   return canvas;
 }
 export async function movableLayers(page,paper,format){
@@ -174,20 +178,20 @@ export async function movableLayers(page,paper,format){
   await drawPage(canvas,{...page,art:[]},paper,0,600,format,capture);
   return [...capture,...(page.art||[])];
 }
-export function drawTrimGuides(ctx,spec,width,safety=false,printerMargin=.25){
-  const scale=width/spec.w;ctx.save();ctx.scale(scale,scale);ctx.lineWidth=.008;ctx.strokeStyle='#697477';
+export function drawTrimGuides(ctx,spec,width,safety=false,printerMargin=.25,bw=false){
+  const scale=width/spec.w;ctx.save();ctx.scale(scale,scale);ctx.lineWidth=.008;ctx.strokeStyle=bw?'#000000':'#697477';
   const line=(x1,y1,x2,y2)=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();};
   if(spec.folded||spec.insert){
-    ctx.strokeStyle='#297da3';ctx.setLineDash([.045,.035]);
+    ctx.strokeStyle=bw?'#000000':'#297da3';ctx.setLineDash([.045,.035]);
     for(let i=1;i<spec.cols;i++)line(i*spec.slotW,0,i*spec.slotW,spec.h);
-    if(spec.folded){line(0,spec.slotH,spec.w,spec.slotH);ctx.setLineDash([]);ctx.strokeStyle='#df582d';ctx.lineWidth=.02;line(spec.slotW,spec.slotH,3*spec.slotW,spec.slotH);}
+    if(spec.folded){line(0,spec.slotH,spec.w,spec.slotH);ctx.setLineDash([]);ctx.strokeStyle=bw?'#000000':'#df582d';ctx.lineWidth=.02;line(spec.slotW,spec.slotH,3*spec.slotW,spec.slotH);}
   }else for(const s of sheetSlots(spec)){
-    ctx.setLineDash([]);ctx.strokeStyle='#df582d';if(spec.count>1)ctx.strokeRect(s.x,s.y,s.w,s.h);
-    ctx.strokeStyle='#297da3';ctx.setLineDash([.045,.035]);
+    ctx.setLineDash([]);ctx.strokeStyle=bw?'#000000':'#df582d';if(spec.count>1)ctx.strokeRect(s.x,s.y,s.w,s.h);
+    ctx.strokeStyle=bw?'#000000':'#297da3';ctx.setLineDash([.045,.035]);
     if(spec.tent)line(s.x,s.y+s.h/2,s.x+s.w,s.y+s.h/2);
-    if(spec.neck){ctx.strokeStyle='#df582d';ctx.setLineDash([]);ctx.beginPath();ctx.arc(s.x+s.w/2,s.y+1,.625,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#297da3';ctx.setLineDash([.045,.035]);line(s.x,s.y+2,s.x+s.w,s.y+2);}
+    if(spec.neck){ctx.strokeStyle=bw?'#000000':'#df582d';ctx.setLineDash([]);ctx.beginPath();ctx.arc(s.x+s.w/2,s.y+1,.625,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=bw?'#000000':'#297da3';ctx.setLineDash([.045,.035]);line(s.x,s.y+2,s.x+s.w,s.y+2);}
   }
-  if(safety){ctx.setLineDash([.06,.04]);ctx.strokeStyle='#297da3';ctx.lineWidth=.012;ctx.strokeRect(printerMargin,printerMargin,spec.w-2*printerMargin,spec.h-2*printerMargin);}
+  if(safety){ctx.setLineDash([.06,.04]);ctx.strokeStyle=bw?'#000000':'#297da3';ctx.lineWidth=.012;ctx.strokeRect(printerMargin,printerMargin,spec.w-2*printerMargin,spec.h-2*printerMargin);}
   ctx.restore();
 }
 export async function drawSheet(canvas,project,width=1400,guides=false,sheetIndex=0,selected=0){
@@ -196,13 +200,14 @@ export async function drawSheet(canvas,project,width=1400,guides=false,sheetInde
   canvas.width=Math.round(width);canvas.height=Math.round(width*spec.h/spec.w);canvas.dataset.overflow='false';
   const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);const scale=canvas.width/spec.w;
   for(let slot=0;slot<indices.length;slot++){
-    const idx=indices[slot],tile=document.createElement('canvas'),s=slots[slot];await drawPage(tile,project.pages[idx],project.paper,idx,Math.ceil(s.w*scale),project.format);
+    const idx=indices[slot],tile=document.createElement('canvas'),s=slots[slot];await drawPage(tile,project.pages[idx],project.paper,idx,Math.ceil(s.w*scale),project.format,null,project.bw);
     if(tile.dataset.overflow==='true')canvas.dataset.overflow='true';
     const faceH=spec.pageH*scale,x=s.x*scale,y=s.y*scale,w=s.w*scale;
     const face=(top,rotated)=>{ctx.save();ctx.translate(x+w/2,top+faceH/2);if(rotated)ctx.rotate(Math.PI);ctx.drawImage(tile,-w/2,-faceH/2,w,faceH);ctx.restore();};
     face(y,spec.tent||spec.folded&&slot<4);if(spec.tent)face(y+faceH,false);
   }
   if(guides)drawTrimGuides(ctx,spec,canvas.width);
+  if(project.bw)hardBlackAndWhite(canvas);
   return canvas;
 }
 export function drawSafetyOverlay(canvas,project,isSheet=false){
